@@ -1,0 +1,8 @@
+Collection of chat frame tweaks
+
+h2. Features
+
+* Mouse-wheel scrolling of chat windows
+* Sticky channel input
+* Hide buttons
+* Clickable URL links in chat w/copy dialog
