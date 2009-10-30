@@ -6,6 +6,8 @@ local blacklist = {
 local buttons = {"UpButton", "DownButton", "BottomButton"}
 local stickyChannels = {"SAY", "YELL", "PARTY", "GUILD", "OFFICER", "RAID", "RAID_WARNING", "BATTLEGROUND", "WHISPER", "CHANNEL"}
 
+local gsub = _G.string.gsub
+local find = _G.string.find
 local noop = function() end
 
 -- Buttons
@@ -55,7 +57,7 @@ for k, channel in pairs(stickyChannels) do
 	ChatTypeInfo[channel].sticky = 1
 end
 
--- URL copy
+-- URL links
 local origSetItemRef = _G.SetItemRef
 local currentLink
 local urlStyle = "|cffffffff|Hurl:%1|h[%1]|h|r"
@@ -66,14 +68,15 @@ local urlPatterns = {
 }
 
 local messageTypes = {
-	"CHAT_MSG_WHISPER", 
-	"CHAT_MSG_GUILD", 
-	"CHAT_MSG_PARTY"
+	"CHAT_MSG_CHANNEL",
+	"CHAT_MSG_GUILD",
+	"CHAT_MSG_PARTY",
+	"CHAT_MSG_WHISPER",
 }
 
 local urlFilter = function(self, event, text, ...)
 	for _, pattern in ipairs(urlPatterns) do
-		local result, matches = string.gsub(text, pattern, urlStyle)
+		local result, matches = gsub(text, pattern, urlStyle)
 
 		if matches > 0 then
 			return false, result, ...
@@ -95,7 +98,7 @@ local setItemRefHook = function(link, text, button)
 	return origSetItemRef(link, text, button)
 end
 
-_G.SetItemRef = setItemRefHook
+SetItemRef = setItemRefHook
 
 StaticPopupDialogs["UrlCopyDialog"] = {
 	text = "URL",
@@ -121,3 +124,41 @@ StaticPopupDialogs["UrlCopyDialog"] = {
 	whileDead = 1,
 	hideOnEscape = 1,
 }
+
+-- Game object links
+local origSendChatMessage = _G.SendChatMessage
+local incomingLinkPattern = "{CLINK:"
+
+local incomingLinkFilter = function(self, event, text, ...)
+	if find(text, incomingLinkPattern) then
+		text = gsub(text, "{CLINK:(%x+):([%d-]-:[%d-]-:[%d-]-:[%d-]-:[%d-]-:[%d-]-:[%d-]-:[%d-]-:[%d-]-):([^}]-)}", "|c%1|Hitem:%2|h[%3]|h|r")
+		text = gsub(text, "{CLINK:achievement:(%x+):(%-?%d-:%-?%x-:%-?%d-:%-?%d-:%-?%d-:%-?%d-:%-?%d-:%-?%d-:%-?%d-:%-?%d-):([^}]-)}", "|c%1|Hachievement:%2|h[%3]|h|r")
+		text = gsub(text, "{CLINK:enchant:(%x+):([%d-]-):([^}]-)}", "|c%1|Henchant:%2|h[%3]|h|r")
+		text = gsub(text, "{CLINK:glyph:(%x+):([%d-]-:[%d-]-):([^}]-)}", "|c%1|Hglyph:%2|h[%3]|h|r")
+		text = gsub(text, "{CLINK:item:(%x+):([%d-]-:[%d-]-:[%d-]-:[%d-]-:[%d-]-:[%d-]-:[%d-]-:[%d-]-:[%d-]-):([^}]-)}", "|c%1|Hitem:%2|h[%3]|h|r")
+		text = gsub(text, "{CLINK:quest:(%x+):([%d-]-):([%d-]-):([^}]-)}", "|c%1|Hquest:%2:%3|h[%4]|h|r")
+		text = gsub(text, "{CLINK:spell:(%x+):([%d-]-):([^}]-)}", "|c%1|Hspell:%2|h[%3]|h|r")
+		text = gsub(text, "{CLINK:talent:(%x+):([%d-]-:[%d-]-):([^}]-)}", "|c%1|Htalent:%2|h[%3]|h|r")
+		text = gsub(text, "{CLINK:trade:(%x+):(%-?%d-:%-?%d-:.*:.*):([^}]-)}", "|c%1|Htrade:%2|h[%3]|h|r")
+		
+		return false, text, ...
+	end
+end
+
+local SendChatMessageHook = function(text, chatType, ...)
+	if text and chatType == "CHANNEL" then
+		text = gsub(text, "|c(%x+)|H(achievement):([0-9A-F:-]+)|h%[([^%]]-)%]|h|r", "{CLINK:%2:%1:%3:%4}")
+		text = gsub(text, "|c(%x+)|H(enchant):(%-?%d-)|h%[([^%]]-)%]|h|r", "{CLINK:%2:%1:%3:%4}")
+		text = gsub(text, "|c(%x+)|H(glyph):(%-?%d-:%-?%d-)|h%[([^%]]-)%]|h|r", "{CLINK:%2:%1:%3:%4}")
+		text = gsub(text, "|c(%x+)|H(item):(%-?%d-:%-?%d-:%-?%d-:%-?%d-:%-?%d-:%-?%d-:%-?%d-:%-?%d-:%-?%d-)|h%[([^%]]-)%]|h|r", "{CLINK:%2:%1:%3:%4}")
+		text = gsub(text, "|c(%x+)|H(quest):(%-?%d-):(%-?%d-)|h%[([^%]]-)%]|h|r", "{CLINK:%2:%1:%3:%4:%5}")
+		text = gsub(text, "|c(%x+)|H(spell):(%-?%d-)|h%[([^%]]-)%]|h|r", "{CLINK:%2:%1:%3:%4}")	
+		text = gsub(text, "|c(%x+)|H(talent):(%-?%d-:%-?%d-)|h%[([^%]]-)%]|h|r", "{CLINK:%2:%1:%3:%4}")
+		text = gsub(text, "|c(%x+)|H(trade):(%-?%d-:%-?%d-:%-?%d-:.-:.-)|h%[([^%]]-)%]|h|r", "{CLINK:%2:%1:%3:%4}")
+	end
+	
+	origSendChatMessage(text, chatType, ...)
+end
+
+ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", incomingLinkFilter)
+SendChatMessage = SendChatMessageHook
