@@ -1,14 +1,9 @@
 -- All this crap was looted from else where (oChat, Chatter etc.)
-local blacklist = {
-	[ChatFrame2] = true,
-}
-
 local buttons = {"UpButton", "DownButton", "BottomButton"}
 local stickyChannels = {"SAY", "YELL", "PARTY", "GUILD", "OFFICER", "RAID", "RAID_WARNING", "BATTLEGROUND", "WHISPER", "CHANNEL"}
 
 local gsub = _G.string.gsub
 local find = _G.string.find
-local noop = function() end
 
 -- Buttons
 local scroll = function(self, dir)
@@ -29,6 +24,10 @@ local scroll = function(self, dir)
 	end
 end
 
+local hide = function(self)
+	self:Hide()
+end
+
 for i = 1, NUM_CHAT_WINDOWS do
 	local frame = _G["ChatFrame" .. i]
 	frame:EnableMouseWheel(true)
@@ -36,18 +35,14 @@ for i = 1, NUM_CHAT_WINDOWS do
 
 	for k, button in pairs(buttons) do
 		button = _G["ChatFrame" .. i .. button]
+		button:SetScript("OnShow", hide)
 		button:Hide()
-		button.Show = noop
-	end
-
-	if not blacklist[frame] then
-		frame.AddMessage = AddMessage
 	end
 end
 
 -- Menu
+ChatFrameMenuButton:SetScript("OnShow", hide)
 ChatFrameMenuButton:Hide()
-ChatFrameMenuButton.Show = noop
 
 -- Edit Box
 ChatFrameEditBox:SetAltArrowKeyMode(false)
@@ -88,7 +83,7 @@ for _, event in ipairs(messageTypes) do
 	ChatFrame_AddMessageEventFilter(event, urlFilter)
 end
 
-local setItemRefHook = function(link, text, button)
+local SetItemRefHook = function(link, text, button)
 	if link:sub(0, 3) == "url" then
 		currentLink = link:sub(5)
 		StaticPopup_Show("UrlCopyDialog")
@@ -98,7 +93,8 @@ local setItemRefHook = function(link, text, button)
 	return origSetItemRef(link, text, button)
 end
 
-SetItemRef = setItemRefHook
+--hooksecurefunc(SetItemRef, SetItemRefHook)
+SetItemRef = SetItemRefHook
 
 StaticPopupDialogs["UrlCopyDialog"] = {
 	text = "URL",
