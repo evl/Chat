@@ -3,3 +3,7 @@
 ## Author: Evl
 
 evl_Chat.lua
+
+config.lua
+
+modules\main.lua
