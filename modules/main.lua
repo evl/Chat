@@ -100,7 +100,6 @@ local SetItemRefHook = function(link, text, button)
 	return origSetItemRef(link, text, button)
 end
 
---hooksecurefunc(SetItemRef, SetItemRefHook)
 SetItemRef = SetItemRefHook
 
 StaticPopupDialogs["UrlCopyDialog"] = {
