@@ -164,3 +164,17 @@ end
 
 ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", incomingLinkFilter)
 SendChatMessage = SendChatMessageHook
+
+-- Repeat filter
+local lastMessage
+local repeatMessageFilter = function(self, event, text, ...)
+	if lastMessage == text then
+		return true
+	else
+		lastMessage = text
+
+		return false, text, ...
+	end
+end
+
+ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", repeatMessageFilter)
