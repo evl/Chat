@@ -6,33 +6,11 @@ local gsub = _G.string.gsub
 local find = _G.string.find
 
 -- Buttons
-local scroll = function(self, dir)
-	if dir > 0 then
-		if IsShiftKeyDown()  then
-			self:ScrollToTop()
-		else
-			self:ScrollUp()
-			self:ScrollUp()
-		end
-	elseif dir < 0 then
-		if IsShiftKeyDown() then
-			self:ScrollToBottom()
-		else
-			self:ScrollDown()
-			self:ScrollDown()
-		end
-	end
-end
-
 local hide = function(self)
 	self:Hide()
 end
 
 for i = 1, NUM_CHAT_WINDOWS do
-	local frame = _G["ChatFrame" .. i]
-	frame:EnableMouseWheel(true)
-	frame:SetScript("OnMouseWheel", scroll)
-
 	for k, button in pairs(buttons) do
 		button = _G["ChatFrame" .. i .. button]
 		button:SetScript("OnShow", hide)
@@ -166,14 +144,16 @@ ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", incomingLinkFilter)
 SendChatMessage = SendChatMessageHook
 
 -- Repeat filter
-local lastMessage
-local repeatMessageFilter = function(self, event, text, ...)
+local messages = {}
+local repeatMessageFilter = function(self, event, text, sender, ...)
+	local lastMessage = messages[sender]
+
 	if lastMessage == text then
 		return true
 	else
-		lastMessage = text
+		messages[sender] = text
 
-		return false, text, ...
+		return false, text, sender, ...
 	end
 end
 
