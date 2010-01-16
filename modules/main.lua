@@ -128,9 +128,7 @@ StaticPopupDialogs["UrlCopyDialog"] = {
 }
 
 -- Game object links
-local origSendChatMessage = _G.SendChatMessage
 local incomingLinkPattern = "{CLINK:"
-
 local incomingLinkFilter = function(self, event, text, ...)
 	if find(text, incomingLinkPattern) then
 		text = gsub(text, "{CLINK:(%x+):([%d-]-:[%d-]-:[%d-]-:[%d-]-:[%d-]-:[%d-]-:[%d-]-:[%d-]-:[%d-]-):([^}]-)}", "|c%1|Hitem:%2|h[%3]|h|r")
@@ -147,6 +145,9 @@ local incomingLinkFilter = function(self, event, text, ...)
 	end
 end
 
+ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", incomingLinkFilter)
+
+local origSendChatMessage = _G.SendChatMessage
 local SendChatMessageHook = function(text, chatType, ...)
 	if text and chatType == "CHANNEL" then
 		text = gsub(text, "|c(%x+)|H(achievement):([0-9A-F:-]+)|h%[([^%]]-)%]|h|r", "{CLINK:%2:%1:%3:%4}")
@@ -162,23 +163,27 @@ local SendChatMessageHook = function(text, chatType, ...)
 	origSendChatMessage(text, chatType, ...)
 end
 
-ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", incomingLinkFilter)
 SendChatMessage = SendChatMessageHook
 
 -- Repeat filter
-local messages = {}
-local repeatMessageFilter = function(self, event, text, sender, language, channelString, target, flags, zone, ...)
-	if zone > 0 and zone <= 2 then
-		local lastMessage = messages[sender]
-
+local lastMessage
+local repeatMessageFilter = function(self, event, text, sender, ...)
+	if self.repeatFilter then
+		if not self.repeatMessages or self.repeatCount > 100 then
+			self.repeatCount = 0
+			self.repeatMessages = {}
+		end
+		
+		lastMessage = self.repeatMessages[sender]
+		
 		if lastMessage == text then
 			return true
-		else
-			messages[sender] = text
 		end
+		
+		self.repeatMessages[sender] = text
+		self.repeatCount = self.repeatCount + 1
 	end
-	
-	return false, text, sender, language, channelString, target, flags, zone, ...
 end
 
 ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", repeatMessageFilter)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", repeatMessageFilter)
