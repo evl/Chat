@@ -2,7 +2,8 @@ Collection of chat frame tweaks
 
 h2. Configuration
 
-Copy @config.lua.sample@ to @config.lua@ and modify as required.
+* Enable and disable modules by modifying @evl_Chat.toc@
+* Copy @config.lua.sample@ to @config.lua@ and modify as required.
 
 h2. Features
 
