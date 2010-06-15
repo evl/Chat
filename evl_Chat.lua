@@ -1,4 +1,5 @@
-evl_Chat = {}
-evl_Chat.config = {
+local addonName, addon = ...
+
+addon.config = {
 	anchorEditBoxTop = false,
 }
