@@ -1,9 +1,16 @@
 local addonName, addon = ...
+local config = addon.config
 
-ChatFrameEditBox:SetAltArrowKeyMode(false)
+for i = 1, NUM_CHAT_WINDOWS do
+	local editBox = _G["ChatFrame" .. i .. "EditBox"]
 
-if addon.config.anchorEditBoxTop then
-	ChatFrameEditBox:ClearAllPoints()
-	ChatFrameEditBox:SetPoint("BOTTOMLEFT", ChatFrame1, "TOPLEFT")
-	ChatFrameEditBox:SetPoint("BOTTOMRIGHT", ChatFrame1, "TOPRIGHT")	
+	editBox:SetAltArrowKeyMode(false)
+
+	if config.anchorEditBoxTop then
+		editBox:ClearAllPoints()
+		
+		local frame = _G["ChatFrame" .. i]
+		editBox:SetPoint("BOTTOMLEFT", frame, "TOPLEFT")
+		editBox:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT")	
+	end
 end

@@ -1,6 +1,7 @@
 local addonName, addon = ...
+local config = addon.config
 
---addon.config.anchorEditBoxTop = false -- Anchor edit box to the top of the chat window
+--config.anchorEditBoxTop = false -- Anchor edit box to the top of the chat window
 
 -- Configuration for a typical "spam" window
 --ChatFrame3.repeatFilter = true -- Repeated messages from the same sender are ignored
