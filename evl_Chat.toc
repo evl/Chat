@@ -10,6 +10,4 @@ modules\buttons.lua
 modules\editbox.lua
 modules\link.lua
 modules\repeat.lua
-modules\scroll.lua
-modules\sticky.lua
 modules\url.lua
