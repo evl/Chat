@@ -26,5 +26,5 @@ if config.hideMenuButton then
 end
 
 if config.hideSocialButton then
-	hideButton(ChatFrameMenuButton)
+	hideButton(FriendsMicroButton)
 end
