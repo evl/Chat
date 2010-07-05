@@ -7,6 +7,7 @@ evl_Chat.lua
 config.lua
 
 modules\buttons.lua
+modules\copy.lua
 modules\editbox.lua
 modules\link.lua
 modules\repeat.lua
