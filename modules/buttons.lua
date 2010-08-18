@@ -17,7 +17,12 @@ local updateBottomButton = function(frame)
 end
 
 local bottomButtonClick = function(button)
-	updateBottomButton(button:GetParent():GetParent())
+	PlaySound("igChatBottom")
+	
+	local frame = button:GetParent()
+	frame:ScrollToBottom()
+
+	updateBottomButton(frame)
 end
 
 if config.hideNavigationButtons then
@@ -29,7 +34,7 @@ if config.hideNavigationButtons then
 		local bottom = frame.buttonFrame.bottomButton
 		bottom:SetParent(frame)
 		bottom:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
-		bottom:HookScript("OnClick", bottomButtonClick)
+		bottom:SetScript("OnClick", bottomButtonClick)
 		bottom:SetAlpha(0.6)
 
 		updateBottomButton(frame)
