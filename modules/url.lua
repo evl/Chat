@@ -49,21 +49,23 @@ StaticPopupDialogs["UrlCopyDialog"] = {
 	button2 = TEXT(CLOSE),
 	hasEditBox = 1,
 	hasWideEditBox = 1,
-	OnShow = function()
-		local editBox = _G[this:GetName() .. "WideEditBox"]
+	OnShow = function(self)
+		local name = self:GetName()
+		local editBox = _G[name .. "WideEditBox"]
 		if editBox then
 			editBox:SetText(currentLink)
 			editBox:SetFocus()
 			editBox:HighlightText(0)
 		end
-		local button = _G[this:GetName() .. "Button2"]
+		
+		local button = _G[name .. "Button2"]		
 		if button then
 			button:ClearAllPoints()
 			button:SetWidth(200)
 			button:SetPoint("CENTER", editBox, "CENTER", 0, -30)
 		end
 	end,
-	EditBoxOnEscapePressed = function() this:GetParent():Hide() end,
+	EditBoxOnEscapePressed = function(self) self:GetParent():Hide() end,
 	timeout = 0,
 	whileDead = 1,
 	hideOnEscape = 1,

@@ -7,10 +7,12 @@ h2. Configuration
 
 h2. Features
 
-* Mouse-wheel scrolling of chat windows
-* Sticky channel input
+* Hide chat frame buttons
 * Hide chat box background and focus
-* Hide buttons
-* Clickable URL links in chat w/copy dialog
+* Modify edit-box anchor
+* Automatically resolve in-game links to items/quests/achievements etc. for custom chat channels
+* Repeat spam filter
 * Copy chat contents (located under the right-click menu of any chat tab)
+* Clickable URLs
+
 
