@@ -51,7 +51,7 @@ StaticPopupDialogs["UrlCopyDialog"] = {
 	hasWideEditBox = 1,
 	OnShow = function(self)
 		local name = self:GetName()
-		local editBox = _G[name .. "WideEditBox"]
+		local editBox = _G[name .. "EditBox"]
 		if editBox then
 			editBox:SetText(currentLink)
 			editBox:SetFocus()
