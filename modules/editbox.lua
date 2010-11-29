@@ -1,29 +1,31 @@
 local addonName, addon = ...
 local config = addon.config
 
-for i = 1, NUM_CHAT_WINDOWS do
-	local prefix = "ChatFrame" .. i
-	local editBox = _G[prefix .. "EditBox"]
-
+local function updateEditBox(frame)
+	local editBox = frame.editBox
 	editBox:SetAltArrowKeyMode(false)
 
 	if config.anchorEditBoxTop then
 		editBox:ClearAllPoints()
-		
-		local frame = _G[prefix]
 		editBox:SetPoint("BOTTOMLEFT", frame, "TOPLEFT")
 		editBox:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT")
 	end
 	
 	if config.hideEditBoxBackground then
-		_G[prefix .. "EditBoxLeft"]:Hide()
-		_G[prefix .. "EditBoxMid"]:Hide()
-		_G[prefix .. "EditBoxRight"]:Hide()		
+		local name = editBox:GetName()
+		
+		_G[name .. "Left"]:Hide()
+		_G[name .. "Mid"]:Hide()
+		_G[name .. "Right"]:Hide()		
 	end
 	
 	if config.hideEditBoxFocus then
-		_G[prefix .. "EditBoxFocusLeft"]:SetTexture(nil)
-		_G[prefix .. "EditBoxFocusMid"]:SetTexture(nil)
-		_G[prefix .. "EditBoxFocusRight"]:SetTexture(nil)		
-	end
+		editBox.focusLeft:SetTexture(nil)
+		editBox.focusMid:SetTexture(nil)
+		editBox.focusRight:SetTexture(nil)
+	end	
+end
+
+for i = 1, NUM_CHAT_WINDOWS do
+	updateEditBox(_G["ChatFrame" .. i])
 end

@@ -13,6 +13,7 @@ local messageTypes = {
 	"CHAT_MSG_GUILD",
 	"CHAT_MSG_PARTY",
 	"CHAT_MSG_RAID",
+	"CHAT_MSG_SAY",
 	"CHAT_MSG_WHISPER",
 }
 

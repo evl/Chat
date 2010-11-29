@@ -29,6 +29,7 @@ if config.hideNavigationButtons then
 	for i = 1, NUM_CHAT_WINDOWS do
 		local frame = _G["ChatFrame" .. i]
 		frame:HookScript("OnShow", updateBottomButton)
+		frame.buttonFrame.Show = frame.buttonFrame.Hide
 		frame.buttonFrame:Hide()
 		
 		local bottom = frame.buttonFrame.bottomButton
